@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     private Long id;
- 
     private String name;
 
     @Column(name = "province")
