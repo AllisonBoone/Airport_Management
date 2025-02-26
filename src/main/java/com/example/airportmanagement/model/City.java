@@ -22,6 +22,9 @@ public class City {
     @Column(name = "population", nullable = false)
     private Integer population;
 
+    @Column(name = "country", nullable = false, length = 100)
+    private String country;
+
     // Created constructor method.
     public City() {}
 
@@ -29,6 +32,7 @@ public class City {
         this.name = name;
         this.province = province;
         this.population = population;
+        this.country = country;
     }
 
     // Created getter and setter methods.
@@ -43,5 +47,8 @@ public class City {
  
     public int getPopulation() { return population; }
     public void setPopulation(int population) { this.population = population; }
+
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
    
 }
