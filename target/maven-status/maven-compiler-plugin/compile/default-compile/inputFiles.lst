@@ -1,0 +1,9 @@
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/repository/AirportRepository.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/AirportManagementApplication.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/service/AirportService.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/controller/AirportController.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/controller/CityController.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/service/CityService.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/model/Airport.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/repository/CityRepository.java
+/Users/admin/Airport_Management/src/main/java/com/example/airportmanagement/model/City.java

@@ -1,0 +1,9 @@
+com/example/airportmanagement/service/CityService.class
+com/example/airportmanagement/repository/CityRepository.class
+com/example/airportmanagement/controller/CityController.class
+com/example/airportmanagement/AirportManagementApplication.class
+com/example/airportmanagement/repository/AirportRepository.class
+com/example/airportmanagement/model/City.class
+com/example/airportmanagement/controller/AirportController.class
+com/example/airportmanagement/model/Airport.class
+com/example/airportmanagement/service/AirportService.class
