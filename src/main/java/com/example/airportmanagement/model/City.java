@@ -46,7 +46,7 @@ public class City {
     public void setProvince(String province) { this.province = province; }
  
     public int getPopulation() { return population; }
-    public void setPopulation(int population) { this.population = population; }
+    public void setPopulation(Integer population) { this.population = population; }
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
