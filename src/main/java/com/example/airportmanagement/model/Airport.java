@@ -2,7 +2,6 @@ package com.example.airportmanagement.model;
  
 // Added imports.
 import jakarta.persistence.*;
- 
 // Created entity class for airport in database.
 @Entity
 public class Airport {

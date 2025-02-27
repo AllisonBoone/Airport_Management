@@ -4,7 +4,6 @@ package com.example.airportmanagement.model;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
 // Created Entity class for passengers in database.
 @Entity
 @Table(name = "passengers")
