@@ -27,9 +27,15 @@ public class PassengerService {
         return passengerRepository.findById(id);
     }
 
+    // Get passenger by aircraft.
+    public List<Passenger> getPassengersByAircraft(Long aircraftId) {
+        return passengerRepository.findPassengersByAircraftId(aircraftId);
+    }
+
     // Add passenger with error handling.
     @Transactional
     public Passenger addPassenger(Passenger passenger) {
+        
         if (passenger.getFirstName() == null || passenger.getFirstName().trim().isEmpty()) {
             throw new IllegalArgumentException("First name can not be empty.");
         }
