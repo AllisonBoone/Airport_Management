@@ -3,6 +3,8 @@ package com.example.airportmanagement.model;
 // Added imports.
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.HashSet;
+import java.util.Set;
 // Created Entity class for aircraft in database.
 @Entity
 @Table(name = "aircraft")
@@ -20,6 +22,9 @@ public class Aircraft {
 
     @Column(nullable = false)
     private int numberOfPassengers;
+
+    @ManyToMany(mappedBy = "aircraft")
+    private Set<Passenger> passengers = new HashSet<>();
 
     // Created constructor method.
     public Aircraft() {}
@@ -42,4 +47,7 @@ public class Aircraft {
 
     public int getNumberOfPassengers() { return numberOfPassengers; }
     public void setNumberOfPassengers(int numberOfPassengers) { this.numberOfPassengers = numberOfPassengers; }
+
+    public Set<Passenger> getPassengers() { return passengers; }
+    public void setPassengers(Set<Passenger> passengers) { this.passengers = passengers; }
 }
