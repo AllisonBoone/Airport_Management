@@ -1,5 +1,5 @@
 package com.example.airportmanagement.repository;
 
-public class PassangerRepository {
+public class PassengerRepository {
     
 }
