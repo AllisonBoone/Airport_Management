@@ -27,15 +27,51 @@ public class AirportService {
         return airportRepository.findById(id);
     }
 
-    // Add new airport.
+    // Get airport by name.
+    public Optional<Airport> getAirportByName(String name) {
+        return airportRepository.findByName(name);
+    }
+
+    // Add new airport with error handling.
     @Transactional
     public Airport addAirport(Airport airport) {
+
+        if (airport.getName() == null || airport.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Airport name can not be empty.");
+        }
+
+        if (airport.getCode() == null || airport.getCode().trim().isEmpty()) {
+            throw new IllegalArgumentException("Airport code can not be empty.");
+        }
+
+        if (airport.getCity() == null) {
+            throw new IllegalArgumentException("Airport must belong to a city.");
+        }
+
+        Optional<Airport> existingAirport = airportRepository.findByName(airport.getName());
+        if (existingAirport.isPresent()) {
+            throw new IllegalArgumentException("This airport already exists.");
+        }
+
         return airportRepository.save(airport);
     }
 
     // Update existing airport.
     @Transactional
     public Airport updateAirport(Long id, Airport updatedAirport) {
+
+        if (updatedAirport.getName() == null || updatedAirport.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Updated airport name can not be empty.");
+        }
+        
+        if (updatedAirport.getCode() == null || updatedAirport.getCode().trim().isEmpty()) {
+            throw new IllegalArgumentException("Updated airport code can not be empty.");
+        }
+
+        if (updatedAirport.getCity() == null) {
+            throw new IllegalArgumentException("Updated airport must belong to a city.");
+        }
+
         return airportRepository.findById(id).map(airport -> {
             airport.setName(updatedAirport.getName());
             airport.setCode(updatedAirport.getCode());
