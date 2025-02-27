@@ -26,6 +26,16 @@ public class CityService {
     public Optional<City> getCityById(Long id) {
         return cityRepository.findById(id);
     }
+
+    // Get city by name.
+    public Optional<City> getCityByName(String name) {
+        return cityRepository.findByName(name);
+    }
+
+    // Get cities by country.
+    public List<City> getCitiesByCountry(String country) {
+        return cityRepository.findByCountry(country);
+    }
  
     // Add new city with error handling.
     @Transactional
@@ -33,6 +43,10 @@ public class CityService {
 
         if (city.getName() == null || city.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("City name can not be empty.");
+        }
+
+        if (city.getCountry() == null || city.getCountry().trim().isEmpty()) {
+            throw new IllegalArgumentException("Country name can not be empty.");
         }
 
         Optional<City> existingCity = cityRepository.findByName(city.getName());
@@ -47,6 +61,15 @@ public class CityService {
     // Update existing city with error handling.
     @Transactional
     public City updateCity(Long id, City updatedCity) {
+
+        if (updatedCity.getName() == null || updatedCity.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Updated city name can not be empty.");
+        }
+
+        if (updatedCity.getCountry() == null || updatedCity.getCountry().trim().isEmpty()) {
+            throw new IllegalArgumentException("Updated country name can not be empty.");
+        }
+
         return cityRepository.findById(id).map(city -> {
             city.setName(updatedCity.getName());
             city.setCountry(updatedCity.getCountry());
@@ -56,12 +79,12 @@ public class CityService {
 
     // Delete existing city.
     @Transactional
-    public void deleteCity(Long id) {
+    public boolean deleteCity(Long id) {
         if (!cityRepository.existsById(id)) {
-            throw new IllegalArgumentException("City with the ID of " + id + "not found.");
+            return false; 
         }
 
         cityRepository.deleteById(id);
-
+        return true; 
     }
 }
