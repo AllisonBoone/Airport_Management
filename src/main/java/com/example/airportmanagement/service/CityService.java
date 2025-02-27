@@ -72,7 +72,7 @@ public class CityService {
             city.setName(updatedCity.getName());
             city.setCountry(updatedCity.getCountry());
             return cityRepository.save(city);
-        }).orElseThrow(() -> new IllegalArgumentException("City with the ID of " + id + "not found."));
+        }).orElseThrow(() -> new IllegalArgumentException("City with the ID of " + id + "was not found."));
     }
 
     // Delete existing city.
