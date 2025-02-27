@@ -42,6 +42,7 @@ public class AirportController {
     // Update airport.
     @PutMapping("/{id}")
     public ResponseEntity<Airport> updateAirport(@PathVariable Long id, @RequestBody Airport updatedAirport) {
+        
         try {
             return new ResponseEntity<>(airportService.updateAirport(id, updatedAirport), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
