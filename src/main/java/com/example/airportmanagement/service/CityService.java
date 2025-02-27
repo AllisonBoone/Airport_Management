@@ -49,9 +49,7 @@ public class CityService {
             throw new IllegalArgumentException("Country name can not be empty.");
         }
 
-        Optional<City> existingCity = cityRepository.findByName(city.getName());
-
-        if (existingCity.isPresent()) {
+        if (cityRepository.findByName(city.getName()).isPresent()) {
             throw new IllegalArgumentException("This city already exists.");
         }
 
@@ -79,12 +77,9 @@ public class CityService {
 
     // Delete existing city.
     @Transactional
-    public boolean deleteCity(Long id) {
-        if (!cityRepository.existsById(id)) {
-            return false; 
-        }
-
-        cityRepository.deleteById(id);
-        return true; 
+    public Optional<City> deleteCity(Long id) {
+        Optional<City> cityToDelete = cityRepository.findById(id);
+        cityToDelete.ifPresent(cityRepository::delete);
+        return cityToDelete;
     }
 }

@@ -61,9 +61,7 @@ public class CityController {
     // Delete an existing city.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
-        boolean deleted = cityService.deleteCity(id);
-        return deleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT) 
-                       : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return cityService.deleteCity(id).map(city -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     
 }
