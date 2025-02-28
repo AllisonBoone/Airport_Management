@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 // Created entity class for airport in database.
 @Entity
+@Table(name = "airport")
 public class Airport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +16,7 @@ public class Airport {
 
     @Column(nullable = false, unique = true)
     private String code;
- 
+
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
     @JsonBackReference

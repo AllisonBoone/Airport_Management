@@ -18,12 +18,8 @@ public class City {
     @Column(name = "population", nullable = false)
     private Integer population;
 
-    @Column(name = "country", nullable = false)
-    private String country;
-
-    @ManyToOne
-    @JoinColumn(name = "province_id", nullable = false)
-    private Province province;
+    @Column(name = "province", nullable = false)
+    private String province;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -39,13 +35,9 @@ public class City {
     public int getPopulation() { return population; }
     public void setPopulation(int population) { this.population = population; }
 
-    public String getCountry() { return country; }
-    public void setCountry(String country) { this.country = country; }
-
-    public Province getProvince() { return province; }
-    public void setProvince(Province province) { this.province = province; }
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
 
     public List<Airport> getAirports() { return airports; }
     public void setAirports(List<Airport> airports) { this.airports = airports; }
-   
 }
