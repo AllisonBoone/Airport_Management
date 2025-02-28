@@ -21,6 +21,9 @@ public class City {
     @Column(name = "province", nullable = false)
     private String province;
 
+    @Column(name = "country", nullable = false)
+    private String country;
+
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Airport> airports;
@@ -37,6 +40,9 @@ public class City {
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
 
     public List<Airport> getAirports() { return airports; }
     public void setAirports(List<Airport> airports) { this.airports = airports; }

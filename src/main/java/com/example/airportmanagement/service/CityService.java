@@ -32,13 +32,14 @@ public class CityService {
         return cityRepository.save(city);
     }
 
-
     // Update city.
     @Transactional
     public City updateCity(Long id, City updatedCity) {
         return cityRepository.findById(id).map(city -> {
             city.setName(updatedCity.getName());
+            city.setPopulation(updatedCity.getPopulation());
             city.setProvince(updatedCity.getProvince());
+            city.setCountry(updatedCity.getCountry());
             return cityRepository.save(city);
         }).orElseThrow(() -> new IllegalArgumentException("City not found"));
     }
