@@ -2,6 +2,7 @@ package com.example.airportmanagement.model;
 
 // Added imports.
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.HashSet;
 import java.util.Set;
 // Created Entity class for passengers in database.
@@ -23,6 +24,7 @@ public class Passenger {
 
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
+    @JsonBackReference
     private City city;
 
     @ManyToMany

@@ -2,7 +2,10 @@ package com.example.airportmanagement.model;
 
 // Added imports.
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.HashSet;
 import java.util.Set;
 // Created Entity class for aircraft in database.
@@ -24,7 +27,17 @@ public class Aircraft {
     private int numberOfPassengers;
 
     @ManyToMany(mappedBy = "aircraft")
+    @JsonBackReference
     private Set<Passenger> passengers = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "aircraft_airport",
+        joinColumns = @JoinColumn(name = "aircraft_id"),
+        inverseJoinColumns = @JoinColumn(name = "airport_id")
+    )
+    @JsonManagedReference
+    private Set<Airport> airports = new HashSet<>();
 
     // Created constructor method.
     public Aircraft() {}

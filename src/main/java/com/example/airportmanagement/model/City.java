@@ -3,6 +3,7 @@ package com.example.airportmanagement.model;
 // Added imports.
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.HashSet;
 import java.util.Set;
 // Created Entity class for city in database.
@@ -27,9 +28,11 @@ public class City {
     private String country;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Airport> airports = new HashSet<>();
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Passenger> passengers = new HashSet<>();
 
     // Created constructor method.

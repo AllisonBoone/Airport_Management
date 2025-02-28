@@ -2,6 +2,7 @@ package com.example.airportmanagement.model;
  
 // Added imports.
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 // Created entity class for airport in database.
 @Entity
 public class Airport {
@@ -17,6 +18,7 @@ public class Airport {
  
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
+    @JsonBackReference
     private City city;
 
     // Created constructor method.
