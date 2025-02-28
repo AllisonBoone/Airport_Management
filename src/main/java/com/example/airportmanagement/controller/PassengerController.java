@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 // Created controller for passenger api.
 @RestController
-@RequestMapping("/passengers")
+@RequestMapping("/api/passengers")
 public class PassengerController {
     private final PassengerService passengerService;
 
@@ -40,7 +40,12 @@ public class PassengerController {
     // Update passenger.
     @PutMapping("/{id}")
     public ResponseEntity<Passenger> updatePassenger(@PathVariable Long id, @RequestBody Passenger passenger) {
-        return ResponseEntity.ok(passengerService.updatePassenger(id, passenger));
+        try {
+            Passenger updatedPassenger = passengerService.updatePassenger(id, passenger);
+            return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Delete existing passenger.

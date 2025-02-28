@@ -11,7 +11,7 @@ import java.util.Optional;
  
 // Created controller for city api.
 @RestController
-@RequestMapping("/cities")
+@RequestMapping("/api/cities")
 public class CityController {
     private final CityService cityService;
  
@@ -61,7 +61,8 @@ public class CityController {
     // Delete an existing city.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
-        return cityService.deleteCity(id).map(city -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        cityService.deleteCity(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
 }

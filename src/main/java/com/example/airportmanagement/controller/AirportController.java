@@ -11,7 +11,7 @@ import java.util.Optional;
  
 // Created controller for airport api. 
 @RestController
-@RequestMapping("/airports")
+@RequestMapping("/api/airports")
 public class AirportController {
     private final AirportService airportService;
  
