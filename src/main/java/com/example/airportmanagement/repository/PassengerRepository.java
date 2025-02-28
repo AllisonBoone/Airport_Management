@@ -10,7 +10,6 @@ import java.util.Optional;
 // Created repository for doing database operations on passenger.
 public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     Optional<Passenger> findByFirstNameAndLastName(String firstName, String lastName);
-
     List<Passenger> findByCityId(Long cityId);
 
     @Query("SELECT p FROM Passenger p JOIN p.aircraft a WHERE a.id = :aircraftId")

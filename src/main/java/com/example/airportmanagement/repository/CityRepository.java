@@ -10,9 +10,8 @@ import java.util.Optional;
 // Created repository for doing database operations on city.
 public interface CityRepository extends JpaRepository<City, Long> {
     Optional<City> findByName(String name);
-    List<City> findByCountry(String country);
+    List<City> findByProvince(String province);
 
-    @Query("SELECT c FROM City c LEFT JOIN FETCH c.airports LEFT JOIN FETCH c.passengers WHERE c.id = :id")
+    @Query("SELECT c FROM City c LEFT JOIN FETCH c.airports WHERE c.id = :id")
     Optional<City> findByIdWithRelations(@Param("id") Long id);
-
 }

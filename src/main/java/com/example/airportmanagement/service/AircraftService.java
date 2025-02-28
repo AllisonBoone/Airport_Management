@@ -16,7 +16,7 @@ public class AircraftService {
         this.aircraftRepository = aircraftRepository;
     }
 
-    // Get all aircraft.
+    // Get all aircraft
     public List<Aircraft> getAllAircraft() {
         return aircraftRepository.findAll();
     }
@@ -26,29 +26,13 @@ public class AircraftService {
         return aircraftRepository.findById(id);
     }
 
-    // Add aircraft with error handling.
+    // Add aircraft.
     @Transactional
     public Aircraft addAircraft(Aircraft aircraft) {
-        if (aircraft.getType() == null || aircraft.getType().trim().isEmpty()) {
-            throw new IllegalArgumentException("Aircraft type cannot be empty.");
-        }
-
-        if (aircraft.getAirlineName() == null || aircraft.getAirlineName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Airline name cannot be empty.");
-        }
-
-        if (aircraft.getNumberOfPassengers() < 1) {
-            throw new IllegalArgumentException("Number of passengers must be at least 1.");
-        }
-
-        if (aircraftRepository.findByTypeAndAirlineName(aircraft.getType(), aircraft.getAirlineName()).isPresent()) {
-            throw new IllegalArgumentException("This aircraft already exists.");
-        }
-
         return aircraftRepository.save(aircraft);
     }
 
-    // Update aircraft with error handling.
+    // Update aircraft.
     @Transactional
     public Aircraft updateAircraft(Long id, Aircraft updatedAircraft) {
         return aircraftRepository.findById(id).map(aircraft -> {
@@ -56,16 +40,15 @@ public class AircraftService {
             aircraft.setAirlineName(updatedAircraft.getAirlineName());
             aircraft.setNumberOfPassengers(updatedAircraft.getNumberOfPassengers());
             return aircraftRepository.save(aircraft);
-        }).orElseThrow(() -> new IllegalArgumentException("Aircraft with ID " + id + " not found."));
+        }).orElseThrow(() -> new IllegalArgumentException("Aircraft not found"));
     }
 
-    // Delete existing aircraft.
+    // Delete aircraft.
     @Transactional
     public void deleteAircraft(Long id) {
         if (!aircraftRepository.existsById(id)) {
-            throw new IllegalArgumentException("Aircraft with ID " + id + " not found.");
+            throw new IllegalArgumentException("Aircraft not found");
         }
         aircraftRepository.deleteById(id);
     }
-    
 }

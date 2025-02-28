@@ -27,46 +27,30 @@ public class PassengerService {
         return passengerRepository.findById(id);
     }
 
-    // Get passenger by aircraft.
-    public List<Passenger> getPassengersByAircraft(Long aircraftId) {
-        return passengerRepository.findPassengersByAircraftId(aircraftId);
-    }
-
-    // Add passenger with error handling.
+    // Add passenger.
     @Transactional
     public Passenger addPassenger(Passenger passenger) {
-        
-        if (passenger.getFirstName() == null || passenger.getFirstName().trim().isEmpty()) {
-            throw new IllegalArgumentException("First name can not be empty.");
-        }
-
-        if (passenger.getLastName() == null || passenger.getLastName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Last name can not be empty.");
-        }
-
-        if (passengerRepository.findByFirstNameAndLastName(passenger.getFirstName(), passenger.getLastName()).isPresent()) {
-            throw new IllegalArgumentException("This passenger already exists.");
-        }
-
         return passengerRepository.save(passenger);
     }
 
-    // Update existing passenger with error handling.
+    // Update passenger.
     @Transactional
     public Passenger updatePassenger(Long id, Passenger updatedPassenger) {
         return passengerRepository.findById(id).map(passenger -> {
             passenger.setFirstName(updatedPassenger.getFirstName());
             passenger.setLastName(updatedPassenger.getLastName());
             passenger.setPhoneNumber(updatedPassenger.getPhoneNumber());
+            passenger.setCity(updatedPassenger.getCity());
+            passenger.setAircraft(updatedPassenger.getAircraft());
             return passengerRepository.save(passenger);
-        }).orElseThrow(() -> new IllegalArgumentException("Passenger with ID of" + id + " was not found."));
+        }).orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
     }
 
-    // Delete existing passenger.
+    // Delete passenger.
     @Transactional
     public void deletePassenger(Long id) {
         if (!passengerRepository.existsById(id)) {
-            throw new IllegalArgumentException("Passenger with ID of" + id + " was not found.");
+            throw new IllegalArgumentException("Passenger not found");
         }
         passengerRepository.deleteById(id);
     }
