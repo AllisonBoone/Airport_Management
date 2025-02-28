@@ -1,13 +1,11 @@
 package com.example.airportmanagement.model;
 
 // Added imports.
-import jakarta.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.persistence.*;
+import java.util.List;
+
 // Created Entity class for aircraft in database.
 @Entity
 @Table(name = "aircraft")
@@ -28,25 +26,7 @@ public class Aircraft {
 
     @ManyToMany(mappedBy = "aircraft")
     @JsonBackReference
-    private Set<Passenger> passengers = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(
-        name = "aircraft_airport",
-        joinColumns = @JoinColumn(name = "aircraft_id"),
-        inverseJoinColumns = @JoinColumn(name = "airport_id")
-    )
-    @JsonManagedReference
-    private Set<Airport> airports = new HashSet<>();
-
-    // Created constructor method.
-    public Aircraft() {}
-
-    public Aircraft(String type, String airlineName, int numberOfPassengers) {
-        this.type = type;
-        this.airlineName = airlineName;
-        this.numberOfPassengers = numberOfPassengers;
-    }
+    private List<Passenger> passengers;
 
     // Created getters and setters methods.
     public Long getId() { return id; }
@@ -61,6 +41,6 @@ public class Aircraft {
     public int getNumberOfPassengers() { return numberOfPassengers; }
     public void setNumberOfPassengers(int numberOfPassengers) { this.numberOfPassengers = numberOfPassengers; }
 
-    public Set<Passenger> getPassengers() { return passengers; }
-    public void setPassengers(Set<Passenger> passengers) { this.passengers = passengers; }
+    public List<Passenger> getPassengers() { return passengers; }
+    public void setPassengers(List<Passenger> passengers) { this.passengers = passengers; }
 }

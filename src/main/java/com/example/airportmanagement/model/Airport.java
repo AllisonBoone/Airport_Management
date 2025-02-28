@@ -21,15 +21,6 @@ public class Airport {
     @JsonBackReference
     private City city;
 
-    // Created constructor method.
-    public Airport() {}
-
-    public Airport(String name, String code, City city) {
-        this.name = name;
-        this.code = code;
-        this.city = city;
-    }
-
     // Created getter and setter methods.
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -1,70 +1,51 @@
 package com.example.airportmanagement.model;
  
 // Added imports.
-import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.persistence.*;
+import java.util.List;
 // Created Entity class for city in database.
 @Entity
 @Table(name = "city")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true, length = 100)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "province", nullable = false, length = 100)
-    private String province;
-    
     @Column(name = "population", nullable = false)
     private Integer population;
 
-    @Column(name = "country", nullable = false, length = 100)
+    @Column(name = "country", nullable = false)
     private String country;
 
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private Set<Airport> airports = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "province_id", nullable = false)
+    private Province province;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<Passenger> passengers = new HashSet<>();
-
-    // Created constructor method.
-    public City() {}
-
-    public City(String name, String province, Integer population, String country) {
-        this.name = name;
-        this.province = province;
-        this.population = population;
-        this.country = country;
-    }
+    private List<Airport> airports;
 
     // Created getter and setter methods.
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
- 
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
- 
-    public String getProvince() { return province; }
-    public void setProvince(String province) { this.province = province; }
- 
+
     public int getPopulation() { return population; }
-    public void setPopulation(Integer population) { this.population = population; }
+    public void setPopulation(int population) { this.population = population; }
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
 
-    public Set<Airport> getAirports() { return airports; }
-    public void setAirports(Set<Airport> airports) { this.airports = airports; }
+    public Province getProvince() { return province; }
+    public void setProvince(Province province) { this.province = province; }
 
-    public Set<Passenger> getPassengers() { return passengers; }
-    public void setPassengers(Set<Passenger> passengers) { this.passengers = passengers; }
+    public List<Airport> getAirports() { return airports; }
+    public void setAirports(List<Airport> airports) { this.airports = airports; }
    
 }
