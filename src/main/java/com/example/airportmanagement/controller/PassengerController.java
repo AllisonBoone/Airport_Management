@@ -20,18 +20,19 @@ public class PassengerController {
 
     // Get all passengers.
     @GetMapping
-    public List<Passenger> getAllPassengers() {
-        return passengerService.getAllPassengers();
+    public ResponseEntity<List<Passenger>> getAllPassengers() {
+        return ResponseEntity.ok(passengerService.getAllPassengers());
     }
 
-    // Get passengers by ID>
+    // Get passengers by ID
     @GetMapping("/{id}")
     public ResponseEntity<Passenger> getPassengerById(@PathVariable Long id) {
         Optional<Passenger> passenger = passengerService.getPassengerById(id);
-        return passenger.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return passenger.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Add passenger.
+    // Add new passenger.
     @PostMapping
     public ResponseEntity<Passenger> addPassenger(@RequestBody Passenger passenger) {
         return new ResponseEntity<>(passengerService.addPassenger(passenger), HttpStatus.CREATED);
@@ -40,12 +41,7 @@ public class PassengerController {
     // Update passenger.
     @PutMapping("/{id}")
     public ResponseEntity<Passenger> updatePassenger(@PathVariable Long id, @RequestBody Passenger passenger) {
-        try {
-            Passenger updatedPassenger = passengerService.updatePassenger(id, passenger);
-            return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(passengerService.updatePassenger(id, passenger));
     }
 
     // Delete existing passenger.
@@ -54,5 +50,4 @@ public class PassengerController {
         passengerService.deletePassenger(id);
         return ResponseEntity.noContent().build();
     }
-    
 }

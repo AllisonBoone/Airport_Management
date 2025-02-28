@@ -20,15 +20,16 @@ public class AircraftController {
 
     // Get all aircraft.
     @GetMapping
-    public List<Aircraft> getAllAircraft() {
-        return aircraftService.getAllAircraft();
+    public ResponseEntity<List<Aircraft>> getAllAircraft() {
+        return ResponseEntity.ok(aircraftService.getAllAircraft());
     }
 
     // Get aircraft by ID.
     @GetMapping("/{id}")
     public ResponseEntity<Aircraft> getAircraftById(@PathVariable Long id) {
         Optional<Aircraft> aircraft = aircraftService.getAircraftById(id);
-        return aircraft.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return aircraft.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     // Add new aircraft.

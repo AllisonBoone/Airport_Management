@@ -23,46 +23,33 @@ public class CityController {
     // Get all cities.
     @GetMapping
     public ResponseEntity<List<City>> getAllCities() {
-        List<City> cities = cityService.getAllCities();
-        return new ResponseEntity<>(cities, HttpStatus.OK);
+        return ResponseEntity.ok(cityService.getAllCities());
     }
 
     // Get city by ID.
     @GetMapping("/{id}")
     public ResponseEntity<City> getCityById(@PathVariable Long id) {
         Optional<City> city = cityService.getCityById(id);
-        return city.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return city.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Create a new city.
+    // Add new city.
     @PostMapping
     public ResponseEntity<City> addCity(@RequestBody City city) {
-        try {
-            City newCity = cityService.addCity(city);
-            return new ResponseEntity<>(newCity, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(cityService.addCity(city), HttpStatus.CREATED);
     }
 
     // Update an existing city.
     @PutMapping("/{id}")
     public ResponseEntity<City> updateCity(@PathVariable Long id, @RequestBody City city) {
-        
-        try {
-            City updatedCity = cityService.updateCity(id, city);
-            return new ResponseEntity<>(updatedCity, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(cityService.updateCity(id, city));
     }
 
     // Delete an existing city.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
         cityService.deleteCity(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
-    
 }

@@ -22,15 +22,15 @@ public class AirportController {
     // Get all airports.
     @GetMapping
     public ResponseEntity<List<Airport>> getAllAirports() {
-        return new ResponseEntity<>(airportService.getAllAirports(), HttpStatus.OK);
+        return ResponseEntity.ok(airportService.getAllAirports());
     }
 
     // Get airport by ID.
     @GetMapping("/{id}")
     public ResponseEntity<Airport> getAirportById(@PathVariable Long id) {
         Optional<Airport> airport = airportService.getAirportById(id);
-        return airport.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return airport.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     // Add new airport.
@@ -41,18 +41,14 @@ public class AirportController {
 
     // Update airport.
     @PutMapping("/{id}")
-    public ResponseEntity<Airport> updateAirport(@PathVariable Long id, @RequestBody Airport updatedAirport) {
-        
-        try {
-            return new ResponseEntity<>(airportService.updateAirport(id, updatedAirport), HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Airport> updateAirport(@PathVariable Long id, @RequestBody Airport airport) {
+        return ResponseEntity.ok(airportService.updateAirport(id, airport));
     }
 
     // Delete existing airport.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAirport(@PathVariable Long id) {
-        return airportService.deleteAirport(id).map(airport -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        airportService.deleteAirport(id);
+        return ResponseEntity.noContent().build();
     }
 }
