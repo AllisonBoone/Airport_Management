@@ -44,7 +44,6 @@ public class CityService {
         }).orElseThrow(() -> new IllegalArgumentException("City not found"));
     }
 
-
     // Delete city.
     @Transactional
     public void deleteCity(Long id) {

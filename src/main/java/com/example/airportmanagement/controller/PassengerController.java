@@ -1,5 +1,6 @@
 package com.example.airportmanagement.controller;
 
+import com.example.airportmanagement.model.Aircraft;
 // Added imports.
 import com.example.airportmanagement.model.Passenger;
 import com.example.airportmanagement.service.PassengerService;
@@ -49,5 +50,13 @@ public class PassengerController {
     public ResponseEntity<Void> deletePassenger(@PathVariable Long id) {
         passengerService.deletePassenger(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Get all aircraft passenger been on.
+    @GetMapping("/{id}/aircraft")
+    public ResponseEntity<List<Aircraft>> getAircraftForPassenger(@PathVariable Long id) {
+        return passengerService.getPassengerById(id)
+                .map(passenger -> ResponseEntity.ok(passenger.getAircraft()))
+                .orElse(ResponseEntity.notFound().build());
     }
 }

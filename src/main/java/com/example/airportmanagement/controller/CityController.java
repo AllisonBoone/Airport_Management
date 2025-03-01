@@ -1,5 +1,6 @@
 package com.example.airportmanagement.controller;
  
+import com.example.airportmanagement.model.Airport;
 // Added imports.
 import com.example.airportmanagement.model.City;
 import com.example.airportmanagement.service.CityService;
@@ -51,5 +52,13 @@ public class CityController {
     public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
         cityService.deleteCity(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Get all airports in city.
+    @GetMapping("/{id}/airports")
+    public ResponseEntity<List<Airport>> getAirportsByCity(@PathVariable Long id) {
+        return cityService.getCityById(id)
+                .map(city -> ResponseEntity.ok(city.getAirports()))
+                .orElse(ResponseEntity.notFound().build());
     }
 }
