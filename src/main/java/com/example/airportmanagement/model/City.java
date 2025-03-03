@@ -28,6 +28,18 @@ public class City {
     @JsonManagedReference
     private List<Airport> airports;
 
+     // Created constructor.
+     public City() {}
+
+     // ✅ Required constructor (matches test case)
+     public City(Long id, String name, int population, String country, String province) {
+         this.id = id;
+         this.name = name;
+         this.population = population;
+         this.province = province;
+         this.country = country;
+     }
+
     // Created getter and setter methods.
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
