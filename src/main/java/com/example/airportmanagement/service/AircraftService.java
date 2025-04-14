@@ -4,16 +4,24 @@ package com.example.airportmanagement.service;
 import com.example.airportmanagement.model.Aircraft;
 import com.example.airportmanagement.repository.AircraftRepository;
 import org.springframework.stereotype.Service;
+import com.example.airportmanagement.model.Flight;
+import com.example.airportmanagement.repository.FlightRepository;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 // Created service class for Aircraft logic.
 @Service
 public class AircraftService {
     private final AircraftRepository aircraftRepository;
+    private final FlightRepository flightRepository;
 
-    public AircraftService(AircraftRepository aircraftRepository) {
+    public AircraftService(AircraftRepository aircraftRepository, FlightRepository flightRepository) {
         this.aircraftRepository = aircraftRepository;
+        this.flightRepository = flightRepository;
     }
 
     // Get all aircraft
@@ -50,5 +58,22 @@ public class AircraftService {
             throw new IllegalArgumentException("Aircraft not found");
         }
         aircraftRepository.deleteById(id);
+    }
+
+    // Get airport by aircraft.
+     public List<String> getAirportsUsedByAircraft(Long aircraftId) {
+        List<Flight> flights = flightRepository.findByAircraftId(aircraftId);
+
+        Set<String> airportNames = new HashSet<>();
+        for (Flight flight : flights) {
+            if (flight.getDepartureAirport() != null) {
+                airportNames.add(flight.getDepartureAirport().getName());
+            }
+            if (flight.getArrivalAirport() != null) {
+                airportNames.add(flight.getArrivalAirport().getName());
+            }
+        }
+
+        return new ArrayList<>(airportNames);
     }
 }

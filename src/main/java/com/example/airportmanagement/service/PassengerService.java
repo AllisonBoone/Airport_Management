@@ -4,17 +4,26 @@ package com.example.airportmanagement.service;
 import com.example.airportmanagement.model.Passenger;
 import com.example.airportmanagement.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
+import com.example.airportmanagement.model.Flight;
+import com.example.airportmanagement.model.Aircraft;
+import com.example.airportmanagement.repository.FlightRepository;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Collections;
 
 // Created service class for passenger logic.
 @Service
 public class PassengerService {
     private final PassengerRepository passengerRepository;
+    private final FlightRepository flightRepository;
 
-    public PassengerService(PassengerRepository passengerRepository) {
+    public PassengerService(PassengerRepository passengerRepository, FlightRepository flightRepository) {
         this.passengerRepository = passengerRepository;
+        this.flightRepository = flightRepository;
     }
 
     // Get all passengers.
@@ -53,5 +62,30 @@ public class PassengerService {
             throw new IllegalArgumentException("Passenger not found");
         }
         passengerRepository.deleteById(id);
+    }
+
+    // Get airport by passenger.
+    public List<String> getAirportsUsedByPassenger(Long passengerId) {
+        Optional<Passenger> passengerOpt = passengerRepository.findById(passengerId);
+        if (passengerOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Aircraft> aircraftList = passengerOpt.get().getAircraft();
+        Set<String> airportNames = new HashSet<>();
+
+        for (Aircraft aircraft : aircraftList) {
+            List<Flight> flights = flightRepository.findByAircraftId(aircraft.getId());
+            for (Flight flight : flights) {
+                if (flight.getDepartureAirport() != null) {
+                    airportNames.add(flight.getDepartureAirport().getName());
+                }
+                if (flight.getArrivalAirport() != null) {
+                    airportNames.add(flight.getArrivalAirport().getName());
+                }
+            }
+        }
+
+        return new ArrayList<>(airportNames);
     }
 }

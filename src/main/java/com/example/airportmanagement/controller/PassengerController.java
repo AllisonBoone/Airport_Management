@@ -1,7 +1,7 @@
 package com.example.airportmanagement.controller;
 
-import com.example.airportmanagement.model.Aircraft;
 // Added imports.
+import com.example.airportmanagement.model.Aircraft;
 import com.example.airportmanagement.model.Passenger;
 import com.example.airportmanagement.service.PassengerService;
 import org.springframework.http.HttpStatus;
@@ -58,5 +58,12 @@ public class PassengerController {
         return passengerService.getPassengerById(id)
                 .map(passenger -> ResponseEntity.ok(passenger.getAircraft()))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Get airport by passenger.
+    @GetMapping("/{id}/airports")
+    public ResponseEntity<List<String>> getAirportsUsedByPassenger(@PathVariable Long id) {
+        List<String> airports = passengerService.getAirportsUsedByPassenger(id);
+        return ResponseEntity.ok(airports);
     }
 }

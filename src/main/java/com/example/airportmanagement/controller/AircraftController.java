@@ -50,4 +50,11 @@ public class AircraftController {
         aircraftService.deleteAircraft(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Get aircraft by airport.
+    @GetMapping("/{id}/airports")
+    public ResponseEntity<List<String>> getAirportsUsedByAircraft(@PathVariable Long id) {
+        List<String> airports = aircraftService.getAirportsUsedByAircraft(id);
+        return ResponseEntity.ok(airports);
+    }
 }
