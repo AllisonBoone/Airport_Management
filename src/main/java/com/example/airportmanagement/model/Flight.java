@@ -4,6 +4,7 @@ package com.example.airportmanagement.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+// Created Entity class for flight in database.
 @Entity
 @Table(name = "flight")
 public class Flight {
