@@ -1,5 +1,7 @@
 com/example/airportmanagement/model/Aircraft.class
 com/example/airportmanagement/service/AircraftService.class
+com/example/airportmanagement/repository/FlightRepository.class
+com/example/airportmanagement/controller/FlightController.class
 com/example/airportmanagement/service/CityService.class
 com/example/airportmanagement/repository/CityRepository.class
 com/example/airportmanagement/repository/AircraftRepository.class
@@ -8,8 +10,10 @@ com/example/airportmanagement/controller/AircraftController.class
 com/example/airportmanagement/controller/PassengerController.class
 com/example/airportmanagement/model/City.class
 com/example/airportmanagement/controller/AirportController.class
+com/example/airportmanagement/model/Flight.class
 com/example/airportmanagement/service/PassengerService.class
 com/example/airportmanagement/repository/PassengerRepository.class
+com/example/airportmanagement/service/FlightService.class
 com/example/airportmanagement/controller/CityController.class
 com/example/airportmanagement/AirportManagementApplication.class
 com/example/airportmanagement/repository/AirportRepository.class

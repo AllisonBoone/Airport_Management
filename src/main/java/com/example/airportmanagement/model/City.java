@@ -31,7 +31,6 @@ public class City {
      // Created constructor.
      public City() {}
 
-     // ✅ Required constructor (matches test case)
      public City(Long id, String name, int population, String country, String province) {
          this.id = id;
          this.name = name;
