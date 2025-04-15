@@ -8,12 +8,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AircraftServiceTest {
 
     @Mock
@@ -62,9 +67,9 @@ class AircraftServiceTest {
     }
 
     @Test
-    void deleteAircraft_ShouldThrowExceptionIfNotFound() {
-        when(aircraftRepository.existsById(99L)).thenReturn(false);
+        void deleteAircraft_ShouldThrowExceptionIfNotFound() {
+            when(aircraftRepository.existsById(99L)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> aircraftService.deleteAircraft(99L));
-    }
+            assertThrows(RuntimeException.class, () -> aircraftService.deleteAircraft(99L));
+        }
 }

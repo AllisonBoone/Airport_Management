@@ -29,7 +29,7 @@ public class CityController {
 
     // Get city by ID.
     @GetMapping("/{id}")
-    public ResponseEntity<City> getCityById(@PathVariable Long id) {
+    public ResponseEntity<City> getCityById(@PathVariable("id") Long id) {
         Optional<City> city = cityService.getCityById(id);
         return city.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -43,20 +43,20 @@ public class CityController {
 
     // Update an existing city.
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCity(@PathVariable Long id, @RequestBody City city) {
+    public ResponseEntity<City> updateCity(@PathVariable("id") Long id, @RequestBody City city) {
         return ResponseEntity.ok(cityService.updateCity(id, city));
     }
 
     // Delete an existing city.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCity(@PathVariable("id") Long id) {
         cityService.deleteCity(id);
         return ResponseEntity.noContent().build();
     }
 
     // Get all airports in city.
     @GetMapping("/{id}/airports")
-    public ResponseEntity<List<Airport>> getAirportsByCity(@PathVariable Long id) {
+    public ResponseEntity<List<Airport>> getAirportsByCity(@PathVariable("id") Long id) {
         return cityService.getCityById(id)
                 .map(city -> ResponseEntity.ok(city.getAirports()))
                 .orElse(ResponseEntity.notFound().build());

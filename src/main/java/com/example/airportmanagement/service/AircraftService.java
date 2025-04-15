@@ -6,6 +6,8 @@ import com.example.airportmanagement.repository.AircraftRepository;
 import org.springframework.stereotype.Service;
 import com.example.airportmanagement.model.Flight;
 import com.example.airportmanagement.repository.FlightRepository;
+import com.example.airportmanagement.repository.PassengerRepository;
+import com.example.airportmanagement.model.Passenger;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,10 +20,12 @@ import java.util.Set;
 public class AircraftService {
     private final AircraftRepository aircraftRepository;
     private final FlightRepository flightRepository;
+    private final PassengerRepository passengerRepository; 
 
-    public AircraftService(AircraftRepository aircraftRepository, FlightRepository flightRepository) {
+    public AircraftService(AircraftRepository aircraftRepository, FlightRepository flightRepository, PassengerRepository passengerRepository) {
         this.aircraftRepository = aircraftRepository;
         this.flightRepository = flightRepository;
+        this.passengerRepository = passengerRepository; 
     }
 
     // Get all aircraft
@@ -54,10 +58,16 @@ public class AircraftService {
     // Delete aircraft.
     @Transactional
     public void deleteAircraft(Long id) {
-        if (!aircraftRepository.existsById(id)) {
-            throw new IllegalArgumentException("Aircraft not found");
+        Aircraft aircraft = aircraftRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aircraft not found"));
+
+        for (Passenger passenger : new HashSet<>(aircraft.getPassengers())) {
+            passenger.getAircraft().remove(aircraft);
+            passengerRepository.save(passenger); 
         }
-        aircraftRepository.deleteById(id);
+        aircraft.getPassengers().clear();
+
+        aircraftRepository.delete(aircraft);
     }
 
     // Get airport by aircraft.

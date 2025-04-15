@@ -27,7 +27,7 @@ public class PassengerController {
 
     // Get passengers by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Passenger> getPassengerById(@PathVariable Long id) {
+    public ResponseEntity<Passenger> getPassengerById(@PathVariable("id") Long id) {
         Optional<Passenger> passenger = passengerService.getPassengerById(id);
         return passenger.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -41,20 +41,20 @@ public class PassengerController {
 
     // Update passenger.
     @PutMapping("/{id}")
-    public ResponseEntity<Passenger> updatePassenger(@PathVariable Long id, @RequestBody Passenger passenger) {
+    public ResponseEntity<Passenger> updatePassenger(@PathVariable("id") Long id, @RequestBody Passenger passenger) {
         return ResponseEntity.ok(passengerService.updatePassenger(id, passenger));
     }
 
     // Delete existing passenger.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePassenger(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePassenger(@PathVariable("id") Long id) {
         passengerService.deletePassenger(id);
         return ResponseEntity.noContent().build();
     }
 
     // Get all aircraft passenger been on.
     @GetMapping("/{id}/aircraft")
-    public ResponseEntity<List<Aircraft>> getAircraftForPassenger(@PathVariable Long id) {
+    public ResponseEntity<List<Aircraft>> getAircraftForPassenger(@PathVariable("id") Long id) {
         return passengerService.getPassengerById(id)
                 .map(passenger -> ResponseEntity.ok(passenger.getAircraft()))
                 .orElse(ResponseEntity.notFound().build());
@@ -62,7 +62,7 @@ public class PassengerController {
 
     // Get airport by passenger.
     @GetMapping("/{id}/airports")
-    public ResponseEntity<List<String>> getAirportsUsedByPassenger(@PathVariable Long id) {
+    public ResponseEntity<List<String>> getAirportsUsedByPassenger(@PathVariable("id") Long id) {
         List<String> airports = passengerService.getAirportsUsedByPassenger(id);
         return ResponseEntity.ok(airports);
     }

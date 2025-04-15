@@ -25,7 +25,7 @@ public class FlightController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Flight> getFlightById(@PathVariable Long id) {
+    public ResponseEntity<Flight> getFlightById(@PathVariable("id") Long id) {
         Optional<Flight> flight = flightService.getFlightById(id);
         return flight.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -37,12 +37,12 @@ public class FlightController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Flight> updateFlight(@PathVariable Long id, @RequestBody Flight flight) {
+    public ResponseEntity<Flight> updateFlight(@PathVariable("id") Long id, @RequestBody Flight flight) {
         return ResponseEntity.ok(flightService.updateFlight(id, flight));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFlight(@PathVariable("id") Long id) {
         flightService.deleteFlight(id);
         return ResponseEntity.noContent().build();
     }

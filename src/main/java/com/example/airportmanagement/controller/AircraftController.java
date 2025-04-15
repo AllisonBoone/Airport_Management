@@ -26,7 +26,7 @@ public class AircraftController {
 
     // Get aircraft by ID.
     @GetMapping("/{id}")
-    public ResponseEntity<Aircraft> getAircraftById(@PathVariable Long id) {
+    public ResponseEntity<Aircraft> getAircraftById(@PathVariable("id") Long id) {
         Optional<Aircraft> aircraft = aircraftService.getAircraftById(id);
         return aircraft.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -40,20 +40,20 @@ public class AircraftController {
 
     // Update aircraft.
     @PutMapping("/{id}")
-    public ResponseEntity<Aircraft> updateAircraft(@PathVariable Long id, @RequestBody Aircraft aircraft) {
+    public ResponseEntity<Aircraft> updateAircraft(@PathVariable("id") Long id, @RequestBody Aircraft aircraft) {
         return ResponseEntity.ok(aircraftService.updateAircraft(id, aircraft));
     }
 
     // Delete existing aircraft.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAircraft(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAircraft(@PathVariable("id") Long id) {
         aircraftService.deleteAircraft(id);
         return ResponseEntity.noContent().build();
     }
 
     // Get aircraft by airport.
     @GetMapping("/{id}/airports")
-    public ResponseEntity<List<String>> getAirportsUsedByAircraft(@PathVariable Long id) {
+    public ResponseEntity<List<String>> getAirportsUsedByAircraft(@PathVariable("id") Long id) {
         List<String> airports = aircraftService.getAirportsUsedByAircraft(id);
         return ResponseEntity.ok(airports);
     }
