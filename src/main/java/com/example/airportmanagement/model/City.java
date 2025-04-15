@@ -31,7 +31,7 @@ public class City {
      // Created constructor.
      public City() {}
 
-     public City(Long id, String name, int population, String country, String province) {
+     public City(Long id, String name, Integer population, String country, String province) {
          this.id = id;
          this.name = name;
          this.population = population;
@@ -46,8 +46,8 @@ public class City {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public int getPopulation() { return population; }
-    public void setPopulation(int population) { this.population = population; }
+    public Integer getPopulation() { return population; }
+    public void setPopulation(Integer population) { this.population = population; }
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
