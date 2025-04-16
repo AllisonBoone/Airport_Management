@@ -1,4 +1,5 @@
 com/example/airportmanagement/service/PassengerServiceTest.class
+com/example/airportmanagement/service/FlightServiceTest.class
 com/example/airportmanagement/service/CityServiceTest.class
 com/example/airportmanagement/service/AirportServiceTest.class
 com/example/airportmanagement/service/AircraftServiceTest.class
