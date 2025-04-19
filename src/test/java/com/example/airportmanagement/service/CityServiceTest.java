@@ -1,15 +1,19 @@
 package com.example.airportmanagement.service;
 
+import com.example.airportmanagement.dto.CityDto;
 import com.example.airportmanagement.model.City;
 import com.example.airportmanagement.repository.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -17,7 +21,7 @@ import static org.mockito.Mockito.*;
 class CityServiceTest {
 
     @Mock
-    private CityRepository cityRepository;
+    private CityRepository cityRepo;
 
     @InjectMocks
     private CityService cityService;
@@ -29,46 +33,59 @@ class CityServiceTest {
         city = new City();
         city.setId(1L);
         city.setName("Test City");
-        city.setPopulation(500000);
+        city.setPopulation(500_000);
         city.setProvince("Test Province");
         city.setCountry("Test Country");
     }
 
     @Test
-    void getAllCities_ShouldReturnCityList() {
-        when(cityRepository.findAll()).thenReturn(List.of(city));
+    void getAllCities_ShouldReturnDtoList() {
+        when(cityRepo.findAll()).thenReturn(List.of(city));
 
-        List<City> cities = cityService.getAllCities();
+        List<CityDto> dtos = cityService.getAllCities();
 
-        assertFalse(cities.isEmpty());
-        assertEquals(1, cities.size());
-        assertEquals("Test City", cities.get(0).getName());
+        assertEquals(1, dtos.size());
+        CityDto dto = dtos.get(0);
+        assertEquals(1L, dto.getId());
+        assertEquals("Test City", dto.getName());
+        assertEquals(500_000, dto.getPopulation());
     }
 
     @Test
-    void getCityById_ShouldReturnCityIfExists() {
-        when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
+    void getCityById_ShouldReturnDtoIfExists() {
+        when(cityRepo.findById(1L)).thenReturn(Optional.of(city));
 
-        Optional<City> foundCity = cityService.getCityById(1L);
+        CityDto dto = cityService.getCityById(1L);
 
-        assertTrue(foundCity.isPresent());
-        assertEquals("Test City", foundCity.get().getName());
+        assertNotNull(dto);
+        assertEquals("Test City", dto.getName());
     }
 
     @Test
-    void addCity_ShouldSaveAndReturnCity() {
-        when(cityRepository.save(any(City.class))).thenReturn(city);
-
-        City savedCity = cityService.addCity(city);
-
-        assertNotNull(savedCity);
-        assertEquals("Test City", savedCity.getName());
+    void getCityById_NotFoundShouldThrow() {
+        when(cityRepo.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () ->
+            cityService.getCityById(99L)
+        );
     }
 
     @Test
-    void deleteCity_ShouldThrowExceptionIfNotFound() {
-        when(cityRepository.existsById(99L)).thenReturn(false);
+    void addCity_ShouldSaveAndReturnDto() {
+        when(cityRepo.save(any(City.class))).thenReturn(city);
 
-        assertThrows(IllegalArgumentException.class, () -> cityService.deleteCity(99L));
+        CityDto dto = cityService.addCity(
+            new CityDto(null, "Test City", 500_000, "Test Province", "Test Country")
+        );
+
+        assertEquals("Test City", dto.getName());
+        assertEquals("Test Country", dto.getCountry());
+    }
+
+    @Test
+    void deleteCity_ShouldThrowWhenNotExists() {
+        when(cityRepo.existsById(99L)).thenReturn(false);
+        assertThrows(EntityNotFoundException.class, () ->
+            cityService.deleteCity(99L)
+        );
     }
 }

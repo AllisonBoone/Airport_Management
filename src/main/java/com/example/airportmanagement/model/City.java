@@ -1,10 +1,9 @@
 package com.example.airportmanagement.model;
- 
-// Added imports.
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
-// Created Entity class for city in database.
+
 @Entity
 @Table(name = "city")
 public class City {
@@ -12,34 +11,25 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(name = "population", nullable = false)
+    @Column(nullable = false)
     private Integer population;
 
-    @Column(name = "province", nullable = false)
+    @Column(nullable = false)
     private String province;
 
-    @Column(name = "country", nullable = false)
+    @Column(nullable = false)
     private String country;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Airport> airports;
 
-     // Created constructor.
-     public City() {}
+    public City() {}
 
-     public City(Long id, String name, Integer population, String country, String province) {
-         this.id = id;
-         this.name = name;
-         this.population = population;
-         this.province = province;
-         this.country = country;
-     }
-
-    // Created getter and setter methods.
+    // Getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

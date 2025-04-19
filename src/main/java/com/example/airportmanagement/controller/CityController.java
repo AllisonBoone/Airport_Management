@@ -1,64 +1,49 @@
 package com.example.airportmanagement.controller;
- 
-import com.example.airportmanagement.model.Airport;
-// Added imports.
-import com.example.airportmanagement.model.City;
+
+import com.example.airportmanagement.dto.CityDto;
 import com.example.airportmanagement.service.CityService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Optional;
- 
-// Created controller for city api.
+
 @RestController
 @RequestMapping("/api/cities")
 public class CityController {
-    private final CityService cityService;
- 
-    public CityController(CityService cityService) {
-        this.cityService = cityService;
+    private final CityService svc;
+    public CityController(CityService svc) {
+        this.svc = svc;
     }
- 
 
-    // Get all cities.
     @GetMapping
-    public ResponseEntity<List<City>> getAllCities() {
-        return ResponseEntity.ok(cityService.getAllCities());
+    public List<CityDto> list() {
+        return svc.getAllCities();
     }
 
-    // Get city by ID.
     @GetMapping("/{id}")
-    public ResponseEntity<City> getCityById(@PathVariable("id") Long id) {
-        Optional<City> city = cityService.getCityById(id);
-        return city.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<CityDto> get(@PathVariable Long id) {
+        // svc.getCityById now returns null if not found
+        CityDto dto = svc.getCityById(id);
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(dto);
     }
 
-    // Add new city.
     @PostMapping
-    public ResponseEntity<City> addCity(@RequestBody City city) {
-        return new ResponseEntity<>(cityService.addCity(city), HttpStatus.CREATED);
+    public ResponseEntity<CityDto> create(@RequestBody CityDto d) {
+        CityDto created = svc.addCity(d);
+        return ResponseEntity.status(201).body(created);
     }
 
-    // Update an existing city.
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCity(@PathVariable("id") Long id, @RequestBody City city) {
-        return ResponseEntity.ok(cityService.updateCity(id, city));
+    public CityDto update(@PathVariable Long id, @RequestBody CityDto d) {
+        return svc.updateCity(id, d);
     }
 
-    // Delete an existing city.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCity(@PathVariable("id") Long id) {
-        cityService.deleteCity(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        svc.deleteCity(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // Get all airports in city.
-    @GetMapping("/{id}/airports")
-    public ResponseEntity<List<Airport>> getAirportsByCity(@PathVariable("id") Long id) {
-        return cityService.getCityById(id)
-                .map(city -> ResponseEntity.ok(city.getAirports()))
-                .orElse(ResponseEntity.notFound().build());
     }
 }

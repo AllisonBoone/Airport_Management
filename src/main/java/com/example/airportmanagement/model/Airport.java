@@ -1,9 +1,8 @@
 package com.example.airportmanagement.model;
- 
-// Added imports.
-import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-// Created entity class for airport in database.
+import jakarta.persistence.*;
+
 @Entity
 @Table(name = "airport")
 public class Airport {
@@ -22,10 +21,11 @@ public class Airport {
     @JsonBackReference
     private City city;
 
-    // Created getter and setter methods.
+    public Airport() {}
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -34,6 +34,6 @@ public class Airport {
 
     public City getCity() { return city; }
     public void setCity(City city) { this.city = city; }
-
 }
+
  

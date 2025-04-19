@@ -1,91 +1,63 @@
 package com.example.airportmanagement.service;
 
-// Added imports.
+import com.example.airportmanagement.dto.PassengerDto;
+import com.example.airportmanagement.dto.DtoMapper;
 import com.example.airportmanagement.model.Passenger;
+import com.example.airportmanagement.model.City;
 import com.example.airportmanagement.repository.PassengerRepository;
+import com.example.airportmanagement.repository.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import com.example.airportmanagement.model.Flight;
-import com.example.airportmanagement.model.Aircraft;
-import com.example.airportmanagement.repository.FlightRepository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
-// Created service class for passenger logic.
 @Service
 public class PassengerService {
-    private final PassengerRepository passengerRepository;
-    private final FlightRepository flightRepository;
+    private final PassengerRepository repo;
+    private final CityRepository cityRepo;
 
-    public PassengerService(PassengerRepository passengerRepository, FlightRepository flightRepository) {
-        this.passengerRepository = passengerRepository;
-        this.flightRepository = flightRepository;
+    public PassengerService(PassengerRepository repo, CityRepository cityRepo) {
+        this.repo = repo;
+        this.cityRepo = cityRepo;
     }
 
-    // Get all passengers.
-    public List<Passenger> getAllPassengers() {
-        return passengerRepository.findAll();
+    public List<PassengerDto> getAllPassengers() {
+        return repo.findAll().stream().map(DtoMapper::toDto).collect(Collectors.toList());
     }
 
-    // Get passenger by ID.
-    public Optional<Passenger> getPassengerById(Long id) {
-        return passengerRepository.findById(id);
+    public Optional<PassengerDto> getPassengerById(Long id) {
+        return repo.findById(id).map(DtoMapper::toDto);
     }
 
-    // Add passenger.
-    @Transactional
-    public Passenger addPassenger(Passenger passenger) {
-        return passengerRepository.save(passenger);
+    public PassengerDto addPassenger(PassengerDto dto) {
+        City city = cityRepo.findById(dto.getCityId())
+            .orElseThrow(() -> new IllegalArgumentException("Invalid city ID: " + dto.getCityId()));
+        Passenger toSave = DtoMapper.toEntity(dto, city);
+        Passenger saved = repo.save(toSave);
+        return DtoMapper.toDto(saved);
     }
 
-    // Update passenger.
-    @Transactional
-    public Passenger updatePassenger(Long id, Passenger updatedPassenger) {
-        return passengerRepository.findById(id).map(passenger -> {
-            passenger.setFirstName(updatedPassenger.getFirstName());
-            passenger.setLastName(updatedPassenger.getLastName());
-            passenger.setPhoneNumber(updatedPassenger.getPhoneNumber());
-            passenger.setCity(updatedPassenger.getCity());
-            passenger.setAircraft(updatedPassenger.getAircraft());
-            return passengerRepository.save(passenger);
-        }).orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
+    public PassengerDto updatePassenger(Long id, PassengerDto dto) {
+        City city = cityRepo.findById(dto.getCityId())
+            .orElseThrow(() -> new IllegalArgumentException("Invalid city ID: " + dto.getCityId()));
+        Passenger updated = repo.findById(id)
+            .map(e -> {
+                e.setFirstName(dto.getFirstName());
+                e.setLastName(dto.getLastName());
+                e.setPhoneNumber(dto.getPhoneNumber());
+                e.setCity(city);
+                return repo.save(e);
+            })
+            .orElseThrow(() -> new EntityNotFoundException("Passenger not found: " + id));
+        return DtoMapper.toDto(updated);
     }
 
-    // Delete passenger.
-    @Transactional
     public void deletePassenger(Long id) {
-        if (!passengerRepository.existsById(id)) {
-            throw new IllegalArgumentException("Passenger not found");
+        if (!repo.existsById(id)) {
+            throw new EntityNotFoundException("Passenger not found: " + id);
         }
-        passengerRepository.deleteById(id);
-    }
-
-    // Get airport by passenger.
-    public List<String> getAirportsUsedByPassenger(Long passengerId) {
-        Optional<Passenger> passengerOpt = passengerRepository.findById(passengerId);
-        if (passengerOpt.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Aircraft> aircraftList = passengerOpt.get().getAircraft();
-        Set<String> airportNames = new HashSet<>();
-
-        for (Aircraft aircraft : aircraftList) {
-            List<Flight> flights = flightRepository.findByAircraftId(aircraft.getId());
-            for (Flight flight : flights) {
-                if (flight.getDepartureAirport() != null) {
-                    airportNames.add(flight.getDepartureAirport().getName());
-                }
-                if (flight.getArrivalAirport() != null) {
-                    airportNames.add(flight.getArrivalAirport().getName());
-                }
-            }
-        }
-
-        return new ArrayList<>(airportNames);
+        repo.deleteById(id);
     }
 }

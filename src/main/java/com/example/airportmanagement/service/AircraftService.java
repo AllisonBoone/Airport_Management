@@ -1,89 +1,58 @@
 package com.example.airportmanagement.service;
 
-// Added imports
+import com.example.airportmanagement.dto.AircraftDto;
 import com.example.airportmanagement.model.Aircraft;
 import com.example.airportmanagement.repository.AircraftRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import com.example.airportmanagement.model.Flight;
-import com.example.airportmanagement.repository.FlightRepository;
-import com.example.airportmanagement.repository.PassengerRepository;
-import com.example.airportmanagement.model.Passenger;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
-// Created service class for Aircraft logic.
 @Service
 public class AircraftService {
+
     private final AircraftRepository aircraftRepository;
-    private final FlightRepository flightRepository;
-    private final PassengerRepository passengerRepository; 
 
-    public AircraftService(AircraftRepository aircraftRepository, FlightRepository flightRepository, PassengerRepository passengerRepository) {
+    public AircraftService(AircraftRepository aircraftRepository) {
         this.aircraftRepository = aircraftRepository;
-        this.flightRepository = flightRepository;
-        this.passengerRepository = passengerRepository; 
     }
 
-    // Get all aircraft
-    public List<Aircraft> getAllAircraft() {
-        return aircraftRepository.findAll();
+    public List<AircraftDto> getAllAircraft() {
+        return aircraftRepository.findAll().stream()
+                .map(a -> new AircraftDto(
+                      a.getId(), a.getType(), a.getAirlineName(), a.getNumberOfPassengers()))
+                .collect(Collectors.toList());
     }
 
-    // Get aircraft by ID.
-    public Optional<Aircraft> getAircraftById(Long id) {
-        return aircraftRepository.findById(id);
+    public Optional<AircraftDto> getAircraftById(Long id) {
+        return aircraftRepository.findById(id)
+                .map(a -> new AircraftDto(
+                      a.getId(), a.getType(), a.getAirlineName(), a.getNumberOfPassengers()));
     }
 
-    // Add aircraft.
-    @Transactional
-    public Aircraft addAircraft(Aircraft aircraft) {
-        return aircraftRepository.save(aircraft);
+    public AircraftDto addAircraft(AircraftDto dto) {
+        Aircraft a = new Aircraft();
+        a.setType(dto.getModel());
+        a.setAirlineName(dto.getManufacturer());
+        a.setNumberOfPassengers(dto.getCapacity());
+        Aircraft saved = aircraftRepository.save(a);
+        return new AircraftDto(saved.getId(), saved.getType(), saved.getAirlineName(), saved.getNumberOfPassengers());
     }
 
-    // Update aircraft.
-    @Transactional
-    public Aircraft updateAircraft(Long id, Aircraft updatedAircraft) {
-        return aircraftRepository.findById(id).map(aircraft -> {
-            aircraft.setType(updatedAircraft.getType());
-            aircraft.setAirlineName(updatedAircraft.getAirlineName());
-            aircraft.setNumberOfPassengers(updatedAircraft.getNumberOfPassengers());
-            return aircraftRepository.save(aircraft);
-        }).orElseThrow(() -> new IllegalArgumentException("Aircraft not found"));
+    public AircraftDto updateAircraft(Long id, AircraftDto dto) {
+        Aircraft updated = aircraftRepository.findById(id)
+            .map(e -> {
+                e.setType(dto.getModel());
+                e.setAirlineName(dto.getManufacturer());
+                e.setNumberOfPassengers(dto.getCapacity());
+                return aircraftRepository.save(e);
+            })
+            .orElseThrow(() -> new EntityNotFoundException("Aircraft not found: " + id));
+        return new AircraftDto(updated.getId(), updated.getType(), updated.getAirlineName(), updated.getNumberOfPassengers());
     }
 
-    // Delete aircraft.
-    @Transactional
     public void deleteAircraft(Long id) {
-        Aircraft aircraft = aircraftRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Aircraft not found"));
-
-        for (Passenger passenger : new HashSet<>(aircraft.getPassengers())) {
-            passenger.getAircraft().remove(aircraft);
-            passengerRepository.save(passenger); 
-        }
-        aircraft.getPassengers().clear();
-
-        aircraftRepository.delete(aircraft);
-    }
-
-    // Get airport by aircraft.
-     public List<String> getAirportsUsedByAircraft(Long aircraftId) {
-        List<Flight> flights = flightRepository.findByAircraftId(aircraftId);
-
-        Set<String> airportNames = new HashSet<>();
-        for (Flight flight : flights) {
-            if (flight.getDepartureAirport() != null) {
-                airportNames.add(flight.getDepartureAirport().getName());
-            }
-            if (flight.getArrivalAirport() != null) {
-                airportNames.add(flight.getArrivalAirport().getName());
-            }
-        }
-
-        return new ArrayList<>(airportNames);
+        aircraftRepository.deleteById(id);
     }
 }

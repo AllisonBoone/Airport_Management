@@ -11,8 +11,10 @@ com/example/airportmanagement/controller/PassengerController.class
 com/example/airportmanagement/model/City.class
 com/example/airportmanagement/controller/AirportController.class
 com/example/airportmanagement/model/Flight.class
+com/example/airportmanagement/config/WebConfig.class
 com/example/airportmanagement/service/PassengerService.class
 com/example/airportmanagement/repository/PassengerRepository.class
+com/example/airportmanagement/config/CorsFilterConfig.class
 com/example/airportmanagement/service/FlightService.class
 com/example/airportmanagement/controller/CityController.class
 com/example/airportmanagement/AirportManagementApplication.class

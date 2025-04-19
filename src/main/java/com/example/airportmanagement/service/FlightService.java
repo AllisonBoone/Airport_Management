@@ -1,52 +1,49 @@
 package com.example.airportmanagement.service;
 
-// Imports.
-import com.example.airportmanagement.model.Flight;
-import com.example.airportmanagement.repository.FlightRepository;
+import com.example.airportmanagement.dto.*;
+import com.example.airportmanagement.model.*;
+import com.example.airportmanagement.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-// Created service class for flight logic.
 @Service
+@Transactional
 public class FlightService {
-    private final FlightRepository flightRepository;
+    private final FlightRepository flightRepo;
+    private final AircraftRepository acRepo;
+    private final AirportRepository apRepo;
 
-    public FlightService(FlightRepository flightRepository) {
-        this.flightRepository = flightRepository;
+    public FlightService(FlightRepository flightRepo, AircraftRepository acRepo, AirportRepository apRepo) {
+        this.flightRepo = flightRepo;
+        this.acRepo = acRepo;
+        this.apRepo = apRepo;
     }
 
-    public List<Flight> getAllFlights() {
-        return flightRepository.findAll();
+    public List<FlightDto> getAllFlights() {
+        return flightRepo.findAll().stream().map(DtoMapper::toDto).collect(Collectors.toList());
     }
-
-    public Optional<Flight> getFlightById(Long id) {
-        return flightRepository.findById(id);
+    public Optional<FlightDto> getFlightById(Long id) {
+        return flightRepo.findById(id).map(DtoMapper::toDto);
     }
-
-    @Transactional
-    public Flight addFlight(Flight flight) {
-        return flightRepository.save(flight);
+    public FlightDto addFlight(FlightDto d) {
+        Flight f = DtoMapper.toEntity(d);
+        var ac = acRepo.findById(d.getAircraftId()).orElseThrow(() -> new IllegalArgumentException("Invalid aircraft"));
+        var dep = apRepo.findById(d.getDepartureAirportId()).orElseThrow(() -> new IllegalArgumentException("Invalid departure"));
+        var arr = apRepo.findById(d.getArrivalAirportId()).orElseThrow(() -> new IllegalArgumentException("Invalid arrival"));
+        f.setAircraft(ac); f.setDepartureAirport(dep); f.setArrivalAirport(arr);
+        return DtoMapper.toDto(flightRepo.save(f));
     }
-
-    @Transactional
-    public Flight updateFlight(Long id, Flight updatedFlight) {
-        return flightRepository.findById(id).map(flight -> {
-            flight.setAircraft(updatedFlight.getAircraft());
-            flight.setDepartureAirport(updatedFlight.getDepartureAirport());
-            flight.setArrivalAirport(updatedFlight.getArrivalAirport());
-            flight.setDepartureTime(updatedFlight.getDepartureTime());
-            flight.setArrivalTime(updatedFlight.getArrivalTime());
-            return flightRepository.save(flight);
-        }).orElseThrow(() -> new IllegalArgumentException("Flight not found"));
+    public FlightDto updateFlight(Long id, FlightDto d) {
+        Flight e = flightRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Flight not found: " + id));
+        e.setFlightNumber(d.getFlightNumber());
+        if (d.getAircraftId()!=null) e.setAircraft(acRepo.findById(d.getAircraftId()).orElseThrow(() -> new IllegalArgumentException("Invalid aircraft")));
+        if (d.getDepartureAirportId()!=null) e.setDepartureAirport(apRepo.findById(d.getDepartureAirportId()).orElseThrow(() -> new IllegalArgumentException("Invalid departure")));
+        if (d.getArrivalAirportId()!=null) e.setArrivalAirport(apRepo.findById(d.getArrivalAirportId()).orElseThrow(() -> new IllegalArgumentException("Invalid arrival")));
+        return DtoMapper.toDto(flightRepo.save(e));
     }
-
-    @Transactional
-    public void deleteFlight(Long id) {
-        if (!flightRepository.existsById(id)) {
-            throw new IllegalArgumentException("Flight not found");
-        }
-        flightRepository.deleteById(id);
-    }
+    public void deleteFlight(Long id) { flightRepo.deleteById(id); }
 }

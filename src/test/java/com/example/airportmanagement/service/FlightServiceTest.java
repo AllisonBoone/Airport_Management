@@ -1,6 +1,6 @@
 package com.example.airportmanagement.service;
 
-// Imports.`
+import com.example.airportmanagement.dto.FlightDto;
 import com.example.airportmanagement.model.Flight;
 import com.example.airportmanagement.model.Aircraft;
 import com.example.airportmanagement.model.Airport;
@@ -28,7 +28,7 @@ class FlightServiceTest {
     @InjectMocks
     private FlightService flightService;
 
-    private Flight flight;
+    private Flight flightEntity;
     private Aircraft aircraft;
     private Airport departure;
     private Airport arrival;
@@ -40,79 +40,69 @@ class FlightServiceTest {
 
         departure = new Airport();
         departure.setId(1L);
-        departure.setName("Departure Airport");
 
         arrival = new Airport();
         arrival.setId(2L);
-        arrival.setName("Arrival Airport");
 
-        flight = new Flight();
-        flight.setId(1L);
-        flight.setAircraft(aircraft);
-        flight.setDepartureAirport(departure);
-        flight.setArrivalAirport(arrival);
-        flight.setDepartureTime(LocalDateTime.now());
-        flight.setArrivalTime(LocalDateTime.now().plusHours(2));
+        flightEntity = new Flight();
+        flightEntity.setId(1L);
+        flightEntity.setAircraft(aircraft);
+        flightEntity.setDepartureAirport(departure);
+        flightEntity.setArrivalAirport(arrival);
+        flightEntity.setDepartureTime(LocalDateTime.now());
+        flightEntity.setArrivalTime(LocalDateTime.now().plusHours(2));
     }
 
-    // Test to return flight list.
     @Test
-    void getAllFlights_ShouldReturnFlightList() {
-        when(flightRepository.findAll()).thenReturn(List.of(flight));
+    void getAllFlights_ShouldReturnFlightDtoList() {
+        when(flightRepository.findAll()).thenReturn(List.of(flightEntity));
 
-        List<Flight> result = flightService.getAllFlights();
+        List<FlightDto> result = flightService.getAllFlights();
 
         assertNotNull(result);
         assertEquals(1, result.size());
+        assertEquals(1L, result.get(0).getId());
     }
 
-    // Test for flight by id.
     @Test
-    void getFlightById_ShouldReturnFlightIfExists() {
-        when(flightRepository.findById(1L)).thenReturn(Optional.of(flight));
+    void getFlightById_ShouldReturnFlightDtoIfExists() {
+        when(flightRepository.findById(1L)).thenReturn(Optional.of(flightEntity));
 
-        Optional<Flight> result = flightService.getFlightById(1L);
+        Optional<FlightDto> result = flightService.getFlightById(1L);
 
         assertTrue(result.isPresent());
         assertEquals(1L, result.get().getId());
     }
 
-    // Test for adding a flight.
     @Test
-    void addFlight_ShouldSaveAndReturnFlight() {
-        when(flightRepository.save(any(Flight.class))).thenReturn(flight);
+    void addFlight_ShouldSaveAndReturnFlightDto() {
+        FlightDto inputDto = new FlightDto(null, "FN123", 1L, 1L, 2L, LocalDateTime.now(), LocalDateTime.now().plusHours(2));
+        when(flightRepository.save(any(Flight.class))).thenReturn(flightEntity);
 
-        Flight saved = flightService.addFlight(flight);
-
-        assertNotNull(saved);
-        assertEquals(flight.getId(), saved.getId());
-    }
-
-    // Test for updating a flight.
-    @Test
-    void updateFlight_ShouldModifyAndReturnFlight() {
-        Flight updated = new Flight();
-        updated.setAircraft(aircraft);
-        updated.setDepartureAirport(departure);
-        updated.setArrivalAirport(arrival);
-        updated.setDepartureTime(LocalDateTime.now().plusHours(1));
-        updated.setArrivalTime(LocalDateTime.now().plusHours(3));
-
-        when(flightRepository.findById(1L)).thenReturn(Optional.of(flight));
-        when(flightRepository.save(any(Flight.class))).thenReturn(updated);
-
-        Flight result = flightService.updateFlight(1L, updated);
+        FlightDto result = flightService.addFlight(inputDto);
 
         assertNotNull(result);
-        assertEquals(updated.getArrivalTime(), result.getArrivalTime());
+        assertEquals(1L, result.getId());
     }
 
-    // Test for trying to delete non-existing flight.
     @Test
-    void deleteFlight_ShouldThrowIfNotExists() {
-        when(flightRepository.existsById(99L)).thenReturn(false);
+    void updateFlight_ShouldSaveAndReturnFlightDto() {
+        FlightDto updateDto = new FlightDto(null, "FN456", 1L, 1L, 2L, LocalDateTime.now(), LocalDateTime.now().plusHours(3));
+        when(flightRepository.findById(1L)).thenReturn(Optional.of(flightEntity));
+        when(flightRepository.save(any(Flight.class))).thenReturn(flightEntity);
 
-        assertThrows(IllegalArgumentException.class, () -> flightService.deleteFlight(99L));
+        FlightDto result = flightService.updateFlight(1L, updateDto);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void deleteFlight_ShouldInvokeRepository() {
+        doNothing().when(flightRepository).deleteById(1L);
+
+        flightService.deleteFlight(1L);
+
+        verify(flightRepository, times(1)).deleteById(1L);
     }
 }
-

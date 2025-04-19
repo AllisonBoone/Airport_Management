@@ -1,10 +1,9 @@
 package com.example.airportmanagement.model;
 
-// Added imports.
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.List;
-// Created Entity class for aircraft in database.
+
 @Entity
 @Table(name = "aircraft")
 public class Aircraft {
@@ -19,13 +18,14 @@ public class Aircraft {
     private String airlineName;
 
     @Column(nullable = false)
-    private int numberOfPassengers;
+    private Integer numberOfPassengers;
 
     @ManyToMany(mappedBy = "aircraft")
     @JsonBackReference
     private List<Passenger> passengers;
 
-    // Created getters and setters methods.
+    public Aircraft() {}
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -35,8 +35,8 @@ public class Aircraft {
     public String getAirlineName() { return airlineName; }
     public void setAirlineName(String airlineName) { this.airlineName = airlineName; }
 
-    public int getNumberOfPassengers() { return numberOfPassengers; }
-    public void setNumberOfPassengers(int numberOfPassengers) { this.numberOfPassengers = numberOfPassengers; }
+    public Integer getNumberOfPassengers() { return numberOfPassengers; }
+    public void setNumberOfPassengers(Integer numberOfPassengers) { this.numberOfPassengers = numberOfPassengers; }
 
     public List<Passenger> getPassengers() { return passengers; }
     public void setPassengers(List<Passenger> passengers) { this.passengers = passengers; }

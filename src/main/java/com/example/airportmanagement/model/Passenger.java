@@ -1,9 +1,8 @@
 package com.example.airportmanagement.model;
 
-// Added imports.
 import jakarta.persistence.*;
 import java.util.List;
-// Created Entity class for passengers in database.
+
 @Entity
 @Table(name = "passengers")
 public class Passenger {
@@ -17,6 +16,7 @@ public class Passenger {
     @Column(nullable = false)
     private String lastName;
 
+    // renamed from “email”
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
@@ -32,7 +32,7 @@ public class Passenger {
     )
     private List<Aircraft> aircraft;
 
-    // Getter and Setter methods.
+    // getters / setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

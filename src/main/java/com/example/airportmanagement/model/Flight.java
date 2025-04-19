@@ -1,27 +1,24 @@
 package com.example.airportmanagement.model;
 
-// Imports.
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-// Created Entity class for flight in database.
 @Entity
 @Table(name = "flight")
 public class Flight {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "aircraft_id", nullable = false)
+    @Column(nullable = false)
+    private String flightNumber;              // ← added
+
+    @ManyToOne @JoinColumn(name = "aircraft_id", nullable = false)
     private Aircraft aircraft;
 
-    @ManyToOne
-    @JoinColumn(name = "departure_airport_id", nullable = false)
+    @ManyToOne @JoinColumn(name = "departure_airport_id", nullable = false)
     private Airport departureAirport;
 
-    @ManyToOne
-    @JoinColumn(name = "arrival_airport_id", nullable = false)
+    @ManyToOne @JoinColumn(name = "arrival_airport_id", nullable = false)
     private Airport arrivalAirport;
 
     @Column(nullable = false)
@@ -30,9 +27,12 @@ public class Flight {
     @Column(nullable = false)
     private LocalDateTime arrivalTime;
 
-    // Getter and Setter methods 
+    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getFlightNumber() { return flightNumber; }
+    public void setFlightNumber(String flightNumber) { this.flightNumber = flightNumber; }
 
     public Aircraft getAircraft() { return aircraft; }
     public void setAircraft(Aircraft aircraft) { this.aircraft = aircraft; }
@@ -49,4 +49,3 @@ public class Flight {
     public LocalDateTime getArrivalTime() { return arrivalTime; }
     public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }
 }
-

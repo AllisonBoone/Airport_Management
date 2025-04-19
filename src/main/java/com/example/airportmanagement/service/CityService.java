@@ -1,55 +1,65 @@
 package com.example.airportmanagement.service;
- 
-// Added imports.
-import com.example.airportmanagement.model.City;
+
+import com.example.airportmanagement.dto.*;
+import com.example.airportmanagement.model.*;
 import com.example.airportmanagement.repository.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Optional;
-// Created service class for city logic.
+import java.util.stream.Collectors;
+
 @Service
 public class CityService {
-    private final CityRepository cityRepository;
+    private final CityRepository repo;
 
-    public CityService(CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
+    public CityService(CityRepository repo) {
+        this.repo = repo;
     }
 
-    // Get all cities.
-    public List<City> getAllCities() {
-        return cityRepository.findAll();
+    public List<CityDto> getAllCities() {
+        return repo.findAll()
+                   .stream()
+                   .map(DtoMapper::toDto)
+                   .collect(Collectors.toList());
     }
 
-    // Grt city by ID.
-    public Optional<City> getCityById(Long id) {
-        return cityRepository.findById(id);
+    public CityDto getCityById(Long id) {
+        return repo.findById(id)
+                   .map(DtoMapper::toDto)
+                   .orElseThrow(() -> new EntityNotFoundException("City not found: " + id));
     }
 
-    // Add city.
-    @Transactional
-    public City addCity(City city) {
-        return cityRepository.save(city);
+    public CityDto addCity(CityDto dto) {
+        City entity = DtoMapper.toEntity(dto);
+            City saved  = repo.save(entity);
+                return DtoMapper.toDto(saved);
     }
 
-    // Update city.
-    @Transactional
-    public City updateCity(Long id, City updatedCity) {
-        return cityRepository.findById(id).map(city -> {
-            city.setName(updatedCity.getName());
-            city.setPopulation(updatedCity.getPopulation());
-            city.setProvince(updatedCity.getProvince());
-            city.setCountry(updatedCity.getCountry());
-            return cityRepository.save(city);
-        }).orElseThrow(() -> new IllegalArgumentException("City not found"));
+    public CityDto updateCity(Long id, CityDto dto) {
+        City updated = repo.findById(id)
+            .map(e -> {
+                e.setName(dto.getName());
+                e.setPopulation(dto.getPopulation());
+                e.setProvince(dto.getProvince());
+                e.setCountry(dto.getCountry());
+                return repo.save(e);
+            })
+            .orElseThrow(() -> new EntityNotFoundException("City not found: " + id));
+        return DtoMapper.toDto(updated);
     }
 
-    // Delete city.
-    @Transactional
     public void deleteCity(Long id) {
-        if (!cityRepository.existsById(id)) {
-            throw new IllegalArgumentException("City not found");
-        }
-        cityRepository.deleteById(id);
+        if (!repo.existsById(id))
+            throw new EntityNotFoundException("City not found: " + id);
+        repo.deleteById(id);
+    }
+
+    public List<AirportDto> getAirportsByCity(Long id) {
+        City city = repo.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("City not found: " + id));
+        return city.getAirports()
+                   .stream()
+                   .map(DtoMapper::toDto)
+                   .collect(Collectors.toList());
     }
 }

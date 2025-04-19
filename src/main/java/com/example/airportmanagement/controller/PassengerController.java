@@ -1,69 +1,48 @@
 package com.example.airportmanagement.controller;
 
-// Added imports.
-import com.example.airportmanagement.model.Aircraft;
-import com.example.airportmanagement.model.Passenger;
+import com.example.airportmanagement.dto.PassengerDto;
 import com.example.airportmanagement.service.PassengerService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Optional;
-// Created controller for passenger api.
+
 @RestController
 @RequestMapping("/api/passengers")
 public class PassengerController {
-    private final PassengerService passengerService;
+    private final PassengerService svc;
+    public PassengerController(PassengerService svc) { this.svc = svc; }
 
-    public PassengerController(PassengerService passengerService) {
-        this.passengerService = passengerService;
-    }
-
-    // Get all passengers.
     @GetMapping
-    public ResponseEntity<List<Passenger>> getAllPassengers() {
-        return ResponseEntity.ok(passengerService.getAllPassengers());
+    public List<PassengerDto> list() {
+        return svc.getAllPassengers();
     }
 
-    // Get passengers by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Passenger> getPassengerById(@PathVariable("id") Long id) {
-        Optional<Passenger> passenger = passengerService.getPassengerById(id);
-        return passenger.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<PassengerDto> get(@PathVariable Long id) {
+        return svc.getPassengerById(id)
+                  .map(ResponseEntity::ok)
+                  .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Add new passenger.
     @PostMapping
-    public ResponseEntity<Passenger> addPassenger(@RequestBody Passenger passenger) {
-        return new ResponseEntity<>(passengerService.addPassenger(passenger), HttpStatus.CREATED);
+    public ResponseEntity<PassengerDto> create(@RequestBody PassengerDto dto) {
+        PassengerDto created = svc.addPassenger(dto);
+        return ResponseEntity.status(201).body(created);
     }
 
-    // Update passenger.
     @PutMapping("/{id}")
-    public ResponseEntity<Passenger> updatePassenger(@PathVariable("id") Long id, @RequestBody Passenger passenger) {
-        return ResponseEntity.ok(passengerService.updatePassenger(id, passenger));
+    public ResponseEntity<PassengerDto> update(
+            @PathVariable Long id,
+            @RequestBody PassengerDto dto
+    ) {
+        PassengerDto updated = svc.updatePassenger(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
-    // Delete existing passenger.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePassenger(@PathVariable("id") Long id) {
-        passengerService.deletePassenger(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        svc.deletePassenger(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // Get all aircraft passenger been on.
-    @GetMapping("/{id}/aircraft")
-    public ResponseEntity<List<Aircraft>> getAircraftForPassenger(@PathVariable("id") Long id) {
-        return passengerService.getPassengerById(id)
-                .map(passenger -> ResponseEntity.ok(passenger.getAircraft()))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // Get airport by passenger.
-    @GetMapping("/{id}/airports")
-    public ResponseEntity<List<String>> getAirportsUsedByPassenger(@PathVariable("id") Long id) {
-        List<String> airports = passengerService.getAirportsUsedByPassenger(id);
-        return ResponseEntity.ok(airports);
     }
 }

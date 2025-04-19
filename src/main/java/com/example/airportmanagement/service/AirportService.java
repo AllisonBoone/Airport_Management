@@ -1,55 +1,89 @@
 package com.example.airportmanagement.service;
- 
-// Added imports.
+
+import com.example.airportmanagement.dto.AirportDto;
 import com.example.airportmanagement.model.Airport;
+import com.example.airportmanagement.model.City;
 import com.example.airportmanagement.repository.AirportRepository;
+import com.example.airportmanagement.repository.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-// Created service class for airport logic.
 @Service
 public class AirportService {
-    private final AirportRepository airportRepository;
+    private final AirportRepository repo;
+    private final CityRepository    cityRepo;
 
-    public AirportService(AirportRepository airportRepository) {
-        this.airportRepository = airportRepository;
+    public AirportService(AirportRepository repo, CityRepository cityRepo) {
+        this.repo     = repo;
+        this.cityRepo = cityRepo;
     }
 
-    // Get all airports.
-    public List<Airport> getAllAirports() {
-        return airportRepository.findAll();
+    public List<AirportDto> getAllAirports() {
+        return repo.findAll().stream()
+            .map(a -> new AirportDto(
+                a.getId(),
+                a.getName(),
+                a.getCode(),
+                a.getCity().getName()
+            ))
+            .collect(Collectors.toList());
     }
 
-    // Get airport by ID.
-    public Optional<Airport> getAirportById(Long id) {
-        return airportRepository.findById(id);
+    public Optional<AirportDto> getAirportById(Long id) {
+        return repo.findById(id)
+            .map(a -> new AirportDto(
+                a.getId(),
+                a.getName(),
+                a.getCode(),
+                a.getCity().getName()
+            ));
     }
 
-    // Add airport.
-    @Transactional
-    public Airport addAirport(Airport airport) {
-        return airportRepository.save(airport);
+    public AirportDto addAirport(AirportDto d) {
+        City c = cityRepo.findByName(d.getCity())
+            .orElseThrow(() -> new EntityNotFoundException("Unknown city: " + d.getCity()));
+
+        Airport a = new Airport();
+        a.setName(d.getName());
+        a.setCode(d.getCode());
+        a.setCity(c);
+
+        Airport saved = repo.save(a);
+        return new AirportDto(
+            saved.getId(),
+            saved.getName(),
+            saved.getCode(),
+            saved.getCity().getName()
+        );
     }
 
-    // Update airport.
-    @Transactional
-    public Airport updateAirport(Long id, Airport updatedAirport) {
-        return airportRepository.findById(id).map(airport -> {
-            airport.setName(updatedAirport.getName());
-            airport.setCode(updatedAirport.getCode());
-            airport.setCity(updatedAirport.getCity());
-            return airportRepository.save(airport);
-        }).orElseThrow(() -> new IllegalArgumentException("Airport not found"));
+    public AirportDto updateAirport(Long id, AirportDto d) {
+        City c = cityRepo.findByName(d.getCity())
+            .orElseThrow(() -> new EntityNotFoundException("Unknown city: " + d.getCity()));
+
+        Airport a = repo.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Airport not found: " + id));
+
+        a.setName(d.getName());
+        a.setCode(d.getCode());
+        a.setCity(c);
+
+        Airport saved = repo.save(a);
+        return new AirportDto(
+            saved.getId(),
+            saved.getName(),
+            saved.getCode(),
+            saved.getCity().getName()
+        );
     }
 
-    // Delete airport.
-    @Transactional
     public void deleteAirport(Long id) {
-        if (!airportRepository.existsById(id)) {
-            throw new IllegalArgumentException("Airport not found");
+        if (!repo.existsById(id)) {
+            throw new EntityNotFoundException("Airport not found: " + id);
         }
-        airportRepository.deleteById(id);
+        repo.deleteById(id);
     }
 }

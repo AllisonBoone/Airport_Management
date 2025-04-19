@@ -6,7 +6,7 @@ services:
     container_name: airport-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 44Aust1n##
+      MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: airport_db
       MYSQL_USER: springuser
       MYSQL_PASSWORD: springpass
